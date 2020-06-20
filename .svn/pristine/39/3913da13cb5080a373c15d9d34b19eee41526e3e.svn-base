@@ -1,0 +1,19 @@
+<?php
+
+namespace app\admin\model;
+
+use app\common\model\TimeModel;
+
+class SystemProvince extends TimeModel
+{
+
+    protected $name = "system_province";
+
+    protected $deleteTime = false;
+
+    public static function getProvinceList(){
+        return self::column('*','id');
+    }
+    
+
+}

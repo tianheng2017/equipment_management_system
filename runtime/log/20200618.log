@@ -1,0 +1,32 @@
+[2020-06-18 18:24:36][sql] CONNECT:[ UseTime:0.114756s ] mysql:host=120.79.46.63;port=3306;dbname=xili;charset=utf8
+[2020-06-18 18:25:04][sql] CONNECT:[ UseTime:0.204510s ] mysql:host=120.79.46.63;port=3306;dbname=xili;charset=utf8
+[2020-06-18 18:25:04][sql] SHOW FULL COLUMNS FROM mall_goods [ RunTime:0.074828s ]
+[2020-06-18 18:25:04][sql] SELECT table_name,table_comment FROM information_schema.TABLES WHERE table_schema = 'easyadmin' AND table_name = 'mall_goods' [ RunTime:0.079310s ]
+[2020-06-18 18:25:14][sql] CONNECT:[ UseTime:0.101718s ] mysql:host=120.79.46.63;port=3306;dbname=xili;charset=utf8
+[2020-06-18 18:25:23][sql] CONNECT:[ UseTime:0.127041s ] mysql:host=120.79.46.63;port=3306;dbname=xili;charset=utf8
+[2020-06-18 18:25:23][sql] SHOW FULL COLUMNS FROM mall_cate [ RunTime:0.083792s ]
+[2020-06-18 18:25:23][sql] SELECT table_name,table_comment FROM information_schema.TABLES WHERE table_schema = 'easyadmin' AND table_name = 'mall_cate' [ RunTime:0.071408s ]
+[2020-06-18 18:30:18][sql] CONNECT:[ UseTime:0.263517s ] mysql:host=120.79.46.63;port=3306;dbname=xili;charset=utf8
+[2020-06-18 18:30:19][sql] SHOW FULL COLUMNS FROM device [ RunTime:0.075931s ]
+[2020-06-18 18:30:19][sql] SELECT table_name,table_comment FROM information_schema.TABLES WHERE table_schema = 'easyadmin' AND table_name = 'device' [ RunTime:0.088524s ]
+[2020-06-18 18:30:19][sql] SHOW FULL COLUMNS FROM system_province [ RunTime:0.082643s ]
+[2020-06-18 18:31:13][sql] CONNECT:[ UseTime:0.196916s ] mysql:host=120.79.46.63;port=3306;dbname=xili;charset=utf8
+[2020-06-18 18:31:13][sql] SHOW FULL COLUMNS FROM device [ RunTime:0.080926s ]
+[2020-06-18 18:31:13][sql] SELECT table_name,table_comment FROM information_schema.TABLES WHERE table_schema = 'easyadmin' AND table_name = 'device' [ RunTime:0.079001s ]
+[2020-06-18 18:31:13][sql] SHOW FULL COLUMNS FROM system_province [ RunTime:0.072952s ]
+[2020-06-18 18:34:54][sql] CONNECT:[ UseTime:0.253871s ] mysql:host=120.79.46.63;port=3306;dbname=xili;charset=utf8
+[2020-06-18 18:34:54][sql] SHOW FULL COLUMNS FROM device [ RunTime:0.076504s ]
+[2020-06-18 18:34:55][sql] SELECT table_name,table_comment FROM information_schema.TABLES WHERE table_schema = 'easyadmin' AND table_name = 'device' [ RunTime:0.078023s ]
+[2020-06-18 18:35:10][sql] CONNECT:[ UseTime:0.128931s ] mysql:host=120.79.46.63;port=3306;dbname=xili;charset=utf8
+[2020-06-18 18:35:10][sql] SHOW FULL COLUMNS FROM system_province [ RunTime:0.074179s ]
+[2020-06-18 18:35:10][sql] SELECT table_name,table_comment FROM information_schema.TABLES WHERE table_schema = 'easyadmin' AND table_name = 'system_province' [ RunTime:0.074965s ]
+[2020-06-18 18:36:15][sql] CONNECT:[ UseTime:0.171434s ] mysql:host=120.79.46.63;port=3306;dbname=xili;charset=utf8
+[2020-06-18 18:36:15][sql] SHOW FULL COLUMNS FROM device [ RunTime:0.081457s ]
+[2020-06-18 18:36:15][sql] SELECT table_name,table_comment FROM information_schema.TABLES WHERE table_schema = 'easyadmin' AND table_name = 'device' [ RunTime:0.063848s ]
+[2020-06-18 18:36:15][sql] SHOW FULL COLUMNS FROM system_province [ RunTime:0.065976s ]
+[2020-06-18 18:36:41][sql] CONNECT:[ UseTime:0.106036s ] mysql:host=120.79.46.63;port=3306;dbname=xili;charset=utf8
+[2020-06-18 18:36:41][sql] SHOW FULL COLUMNS FROM system_province [ RunTime:0.069505s ]
+[2020-06-18 18:36:41][sql] SELECT table_name,table_comment FROM information_schema.TABLES WHERE table_schema = 'easyadmin' AND table_name = 'system_province' [ RunTime:0.079079s ]
+[2020-06-18 18:37:04][sql] CONNECT:[ UseTime:0.177217s ] mysql:host=120.79.46.63;port=3306;dbname=xili;charset=utf8
+[2020-06-18 18:37:04][sql] SHOW FULL COLUMNS FROM system_province [ RunTime:0.080319s ]
+[2020-06-18 18:37:04][sql] SELECT table_name,table_comment FROM information_schema.TABLES WHERE table_schema = 'easyadmin' AND table_name = 'system_province' [ RunTime:0.077847s ]

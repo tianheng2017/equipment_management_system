@@ -1,0 +1,127 @@
+<link rel="stylesheet" href="/static/plugs/layui-v2.5.6/css/layui.css">
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div style="width: 180px;resize: both;display: inline-block;">
+            <div id="amap" class="demo-tree-more"></div>
+        </div>
+        <div id="container" style="width:88%; height:800px;resize:both;display: inline-block;position: absolute!important;top:5px;"></div>
+    </div>
+</div>
+<script type="text/javascript" src="/static/plugs/jquery-3.4.1/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" src="/static/plugs/layui-v2.5.6/layui.all.js"></script>
+<script type="text/javascript" src="/static/plugs/amap/adcodes.js"></script>
+<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=8278ec87f2f992b65ff6553afad8aea7&plugin=AMap.ControlBar,AMap.DistrictLayer,AMap.Scale,AMap.ToolBar,AMap.MarkerClusterer"></script>
+<script src="//webapi.amap.com/ui/1.1/main.js"></script>
+<script>
+    var map = new AMap.Map('container', {
+        resizeEnable: true,
+        rotateEnable:true,
+        pitchEnable:true,
+        features:['bg','road', 'building', 'point'],
+        pitch:0,
+        rotation:0,
+        viewMode:'3D',
+        buildingAnimation:true,
+        expandZoomRange:true,
+        center: [105, 34],
+        zoom: 5
+    });
+    map.addControl(new AMap.ControlBar({
+        showZoomBar:false,
+        showControlButton:true,
+        position:{
+            right:'10px',
+            top:'10px'
+        }
+    }));
+    layui.use(['tree', 'util'], function(){
+        var tree = layui.tree
+            ,layer = layui.layer
+            ,util = layui.util
+            ,data = {$tree|raw};
+        tree.render({
+            elem: '#amap'
+            ,data: data
+            ,showLine: true
+            ,click: function(obj){
+                var data = obj.data
+                    ,result = isNaN(data.id);
+                console.log(data);
+                //如果点击的是设备，地图放大17级，设置设备为中心点
+                if (result){
+                    map.setZoomAndCenter(17, [data.x_coordinates, data.y_coordinates]);
+                }else{
+                    map.setZoomAndCenter(data.zoom, [data.center.split(',')[0], data.center.split(',')[0]]);
+                }
+            }
+        });
+    });
+</script>
+<script type="text/javascript" src="/static/plugs/amap/DistrictExplorer.js"></script>
+<script>
+$(function () {
+    get_maker();
+});
+var overlayGroups, cluster;
+function get_marker_table(id){
+    var data;
+    $.ajax({
+        url: '{:url("device.area/pop")}',
+        type:"GET",
+        async: false,
+        dataType:"html",
+        data: {id: id},
+        success:function(result){
+            data = result;
+        }
+    });
+    return data;
+}
+function get_maker(){
+    $.ajax({
+        url : '{:url("device.area/index")}',
+        type : "get",
+        dataType : "json",
+        success : function(res){
+            if(res.code === 0){
+                return false;
+            }
+            var marker, markers = [];
+            var infoWindow = new AMap.InfoWindow({
+                isCustom: false,
+                autoMove: true,
+                offset: new AMap.Pixel(0, -30),
+                size: new AMap.Size(560, 330),
+                content: ""
+            });
+            if(!res.data) return true;
+            for(var i=0; i< res.data.length; i++){
+                var lnglat=[res.data[i].lng,res.data[i].lat];
+                marker = new AMap.Marker({
+                    position: lnglat,
+                    zIndex: 1000,
+                    title: res.data[i].name,
+                    map: map,
+                    extData: {
+                        id: i + 1
+                    }
+                });
+                marker.id = res.data[i].id;
+                marker.lnglat = [res.data[i].lng,res.data[i].lat];
+                marker.on('click', function(e){
+                    var htmls = get_marker_table(e.target.id);
+                    infoWindow.setContent(htmls);
+                    infoWindow.open(map, e.lnglat);
+                    e.target.setAnimation('AMAP_ANIMATION_BOUNCE');
+                    infoWindow.on('change', function() {
+                        e.target.setAnimation('AMAP_ANIMATION_NONE');
+                    });
+                });
+                markers.push(marker);
+            }
+            overlayGroups = new AMap.OverlayGroup(markers);
+            map.add(overlayGroups);
+        }
+    });
+}
+</script>

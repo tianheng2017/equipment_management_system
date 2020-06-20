@@ -1,0 +1,6 @@
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div id="container"></div>
+    </div>
+</div>
+<script src="https://webapi.amap.com/js/require.js" data-main="./require-init"></script>

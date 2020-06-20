@@ -1,0 +1,108 @@
+<link rel="stylesheet" href="__STATIC__/admin/css/welcome.css?v={:time()}" media="all">
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div class="layui-row layui-col-space15">
+            <div class="layui-col-md12">
+                <div class="layui-row layui-col-space15">
+                    <div class="layui-col-md6">
+                        <div class="layui-card">
+                            <div class="layui-card-header"><i class="fa fa-warning icon"></i>数据统计</div>
+                            <div class="layui-card-body">
+                                <div class="welcome-module">
+                                    <div class="layui-row layui-col-space10">
+                                        <div class="layui-col-xs6">
+                                            <div class="panel layui-bg-number">
+                                                <div class="panel-body">
+                                                    <div class="panel-title">
+                                                        <span class="label pull-right layui-bg-blue">实时</span>
+                                                        <h5>用户统计</h5>
+                                                    </div>
+                                                    <div class="panel-content">
+                                                        <h1 class="no-margins">1234</h1>
+                                                        <small>当前分类总记录数</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-xs6">
+                                            <div class="panel layui-bg-number">
+                                                <div class="panel-body">
+                                                    <div class="panel-title">
+                                                        <span class="label pull-right layui-bg-cyan">实时</span>
+                                                        <h5>商品统计</h5>
+                                                    </div>
+                                                    <div class="panel-content">
+                                                        <h1 class="no-margins">1234</h1>
+                                                        <small>当前分类总记录数</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-xs6">
+                                            <div class="panel layui-bg-number">
+                                                <div class="panel-body">
+                                                    <div class="panel-title">
+                                                        <span class="label pull-right layui-bg-orange">实时</span>
+                                                        <h5>浏览统计</h5>
+                                                    </div>
+                                                    <div class="panel-content">
+                                                        <h1 class="no-margins">1234</h1>
+                                                        <small>当前分类总记录数</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="layui-col-xs6">
+                                            <div class="panel layui-bg-number">
+                                                <div class="panel-body">
+                                                    <div class="panel-title">
+                                                        <span class="label pull-right layui-bg-green">实时</span>
+                                                        <h5>订单统计</h5>
+                                                    </div>
+                                                    <div class="panel-content">
+                                                        <h1 class="no-margins">1234</h1>
+                                                        <small>当前分类总记录数</small>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="layui-col-md6">
+                        <div class="layui-card">
+                            <div class="layui-card-header"><i class="fa fa-credit-card icon icon-blue"></i>快捷入口</div>
+                            <div class="layui-card-body">
+                                <div class="welcome-module">
+                                    <div class="layui-row layui-col-space10 layuimini-qiuck">
+
+                                        {foreach $quicks as $vo}
+                                        <div class="layui-col-xs3 layuimini-qiuck-module">
+                                            <a layuimini-content-href="{:url($vo['href'])}" data-title="{$vo['title']}">
+                                                <i class="{$vo['icon']|raw}"></i>
+                                                <cite>{$vo['title']}</cite>
+                                            </a>
+                                        </div>
+                                        {/foreach}
+
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="layui-col-md12">
+                        <div class="layui-card">
+                            <div class="layui-card-header"><i class="fa fa-line-chart icon"></i>报表统计</div>
+                            <div class="layui-card-body">
+                                <div id="echarts-records" style="width: 100%;min-height:500px"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

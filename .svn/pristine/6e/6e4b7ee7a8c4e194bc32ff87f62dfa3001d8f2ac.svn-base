@@ -1,0 +1,31 @@
+<style>
+    .layui-table th{font-weight: bold;}
+    .layui-table tr{height:50px;}
+</style>
+<script type="text/javascript" src="/static/plugs/jquery-3.4.1/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" src="/static/plugs/layui-v2.5.6/layui.all.js"></script>
+<link rel="stylesheet" href="/static/plugs/layui-v2.5.6/css/layui.css">
+<h3 style="text-align: center;padding:10px 0 5px 0;font-weight: bold;">
+    <img src="/static/admin/images/marker_icon.png" style="width:15px;height:20px;padding: 0 5px 3px 0;">设备参数
+</h3>
+<table class="layui-table" lay-skin="nob">
+    <colgroup>
+        <col width="120">
+        <col width="80">
+        <col width="170">
+        <col width="100">
+        <col>
+    </colgroup>
+    <thead>
+    <tr>
+        <th>参数</th>
+        <th>当前值</th>
+        <th>采集时间</th>
+        <th>状态</th>
+        <th>取值范围</th>
+    </tr>
+    </thead>
+    <tbody>
+
+    </tbody>
+</table>

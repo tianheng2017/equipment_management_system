@@ -1,0 +1,65 @@
+define(["jquery", "layui", "easy-admin", "initAMap"], function ($, ea) {
+
+    var Controller = {
+        index: function () {
+            require.config({
+                paths: {
+                    "amap": "https://webapi.amap.com/maps?v=1.4.15&key=8278ec87f2f992b65ff6553afad8aea7&callback=onAMapLoaded&plugin=AMap.ControlBar,AMap.DistrictLayer,AMap.Scale,AMap.ToolBar,AMap.MarkerClusterer"
+                }
+            });
+            window.onAMapLoaded = function() {
+                require(['initAMap'], function(mapIniter) {
+                    mapIniter.init();
+                    $.ajax({
+                        url: 'device.area/index',
+                        type: "get",
+                        dataType: "json",
+                        success: function (res) {
+                        if(res.code === 0){
+                            layer.alert(res.msg, function(index){
+                                //ea.url('index');
+                            });
+                        }
+                        var marker, markers = [];
+                        var infoWindow = new AMap.InfoWindow({
+                            isCustom: false,
+                            autoMove: true,
+                            offset: new AMap.Pixel(0, -30),
+                            size: new AMap.Size(560, 330),
+                            content: ""
+                        });
+                        if(!res.data) return true;
+                        for(var i=0; i< res.data.length; i++){
+                            var lnglat=[res.data[i].lng,res.data[i].lat];
+                            marker = new AMap.Marker({
+                                position: lnglat,
+                                zIndex: 1000,
+                                title: res.data[i].name,
+                                map: map,
+                                extData: {
+                                    id: i + 1
+                                }
+                            });
+                            marker.id = res.data[i].id;
+                            marker.on('click', function(e){
+                                var htmls = get_marker_table(e.target.id);
+                                infoWindow.setContent(htmls);
+                                infoWindow.open(map, e.lnglat);
+                                e.target.setAnimation('AMAP_ANIMATION_BOUNCE');
+                                infoWindow.on('change', function() {
+                                    e.target.setAnimation('AMAP_ANIMATION_NONE');
+                                });
+                            });
+                            markers.push(marker);
+                        }
+                        overlayGroups = new AMap.OverlayGroup(markers);
+                        map.add(overlayGroups);
+                    });
+                });
+            }
+            require(['amap']);
+            // ea.listen();
+        },
+    };
+    return Controller;
+});

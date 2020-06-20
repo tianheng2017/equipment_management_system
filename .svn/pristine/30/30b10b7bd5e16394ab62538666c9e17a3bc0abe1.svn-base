@@ -1,0 +1,22 @@
+<?php
+
+namespace app\admin\model;
+
+use app\common\model\TimeModel;
+
+class Device extends TimeModel
+{
+
+    protected $name = "device";
+
+    protected $deleteTime = false;
+
+    
+    public function systemProvince()
+    {
+        return $this->belongsTo('\app\admin\model\SystemProvince', 'area_id', 'id');
+    }
+
+    
+
+}

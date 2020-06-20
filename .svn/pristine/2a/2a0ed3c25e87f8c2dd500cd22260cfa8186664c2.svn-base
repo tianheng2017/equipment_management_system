@@ -1,0 +1,68 @@
+<?php
+
+// +----------------------------------------------------------------------
+// | EasyAdmin
+// +----------------------------------------------------------------------
+// | PHP交流群: 763822524
+// +----------------------------------------------------------------------
+// | 开源协议  https://mit-license.org 
+// +----------------------------------------------------------------------
+// | github开源项目：https://github.com/zhongshaofa/EasyAdmin
+// +----------------------------------------------------------------------
+
+namespace app\admin\model;
+
+
+use app\common\model\TimeModel;
+
+class SystemAdmin extends TimeModel
+{
+
+    protected $deleteTime = 'delete_time';
+
+    public function getAuthList()
+    {
+        $list = (new SystemAuth())
+            ->where('status', 1)
+            ->column('title', 'id');
+        return $list;
+    }
+
+    public static function onAfterDelete($user)
+    {
+        Device::destroy(function($query) use($user){
+            $query->where('uid','=',$user->id);
+        });
+    }
+
+    /**
+     * list_to_tree
+     */
+    public static function list_to_tree($list, $pk = 'id', $sid = 'pid', $child = 'children', $root = 0)
+    {
+        $tree = array();
+        if (is_array($list)) {
+            $refer = array();
+            foreach ($list as $key => $data) {
+                $refer[$data[$pk]] =& $list[$key];
+            }
+            foreach ($list as $key => $data) {
+                $parentid = $data[$sid];
+                if ($parentid == $root) {
+                    unset($list[$key]['pid']);
+                    $tree[] =& $list[$key];
+                    $list[$key]['spread'] = true;
+                } else {
+                    if (isset($refer[$parentid])) {
+                        $parent =& $refer[$parentid];
+                        unset($list[$key]['pid']);
+                        $list[$key]['spread'] = true;
+                        $parent[$child][] =& $list[$key];
+                    }
+                }
+            }
+        }
+        return $tree;
+    }
+
+}

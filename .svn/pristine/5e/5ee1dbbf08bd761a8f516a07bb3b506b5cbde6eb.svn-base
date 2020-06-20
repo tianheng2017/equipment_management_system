@@ -1,0 +1,217 @@
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div id="container" style="width:100%; height:800px;resize:both;"></div>
+    </div>
+</div>
+<script type="text/javascript" src="/static/plugs/jquery-3.4.1/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" src="/static/plugs/layui-v2.5.6/layui.all.js"></script>
+<script type="text/javascript" src="/static/plugs/amap/adcodes.js"></script>
+<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=8278ec87f2f992b65ff6553afad8aea7&plugin=AMap.ControlBar,AMap.DistrictLayer,AMap.Scale,AMap.ToolBar,AMap.MarkerClusterer"></script>
+<script src="//webapi.amap.com/ui/1.1/main.js"></script>
+<script>
+    var map = new AMap.Map('container', {
+        resizeEnable: true,
+        rotateEnable:true,
+        pitchEnable:true,
+        features:['bg','road', 'building', 'point'],
+        pitch:0,
+        rotation:0,
+        viewMode:'3D',
+        buildingAnimation:true,
+        expandZoomRange:true,
+        center: [105, 34],
+        zoom: 4
+    });
+    map.addControl(new AMap.ControlBar({
+        showZoomBar:false,
+        showControlButton:true,
+        position:{
+            right:'10px',
+            top:'10px'
+        }
+    }));
+</script>
+<script type="text/javascript" src="/static/plugs/amap/DistrictExplorer.js"></script>
+<script>
+    $(function () {
+        var overlayGroups, cluster;
+        $.ajax({
+            url : '{:url("device.area/index")}',
+            type : "get",
+            dataType : "json",
+            success : function(res){
+                if(res.code === 0){
+                    layer.alert(res.msg, function(index){
+                        window.location.href = res.url;
+                    });
+                }
+                var marker, markers = [];
+                var infoWindow = new AMap.InfoWindow({
+                    isCustom: false,
+                    autoMove: true,
+                    offset: new AMap.Pixel(0, -30),
+                    size: new AMap.Size(560, 330),
+                    content: ""
+                });
+                if(!res.data) return true;
+                for(var i=0; i< res.data.length; i++){
+                    var lnglat=[res.data[i].lng,res.data[i].lat];
+                    marker = new AMap.Marker({
+                        position: lnglat,
+                        zIndex: 1000,
+                        title: res.data[i].name,
+                        map: map,
+                        extData: {
+                            id: i + 1
+                        }
+                    });
+                    marker.id = res.data[i].id;
+                    marker.on('click', function(e){
+                        var htmls = get_marker_table(e.target.id);
+                        infoWindow.setContent(htmls);
+                        infoWindow.open(map, e.lnglat);
+                        e.target.setAnimation('AMAP_ANIMATION_BOUNCE');
+                        infoWindow.on('change', function() {
+                            e.target.setAnimation('AMAP_ANIMATION_NONE');
+                        });
+                    });
+                    markers.push(marker);
+                }
+                overlayGroups = new AMap.OverlayGroup(markers);
+                map.add(overlayGroups);
+            }
+        });
+        function initPage(DistrictCluster, PointSimplifier, $) {
+
+            var pointSimplifierIns = new PointSimplifier({
+                map: map, //所属的地图实例
+                zIndex: 110,
+                autoSetFitView: false, //禁止自动更新地图视野
+                getPosition: function(item) {
+
+                    return item.position;
+                },
+                getHoverTitle: function(dataItem, idx) {
+                    return idx + ': ' + dataItem.dataItem;
+                },
+                renderOptions: {
+                    //点的样式
+                    pointStyle: {
+                        width: 6,
+                        height: 6,
+                        fillStyle: 'rgba(153, 0, 153, 0.38)'
+                    },
+                    //鼠标hover时的title信息
+                    hoverTitleStyle: {
+                        position: 'top'
+                    }
+                }
+            });
+
+            var distCluster = new DistrictCluster({
+                zIndex: 100,
+                map: map, //所属的地图实例
+
+                getPosition: function(item) {
+
+                    if (!item) {
+                        return null;
+                    }
+
+                    var parts = item.split(',');
+
+                    //返回经纬度
+                    return [parseFloat(parts[0]), parseFloat(parts[1])];
+                }
+            });
+
+            var currentAdcode = null;
+
+            //监听区划面的点击
+            distCluster.on('featureClick', function(e, feature) {
+
+
+                currentAdcode = feature.properties.adcode;
+
+                //获取该节点的聚合信息
+                distCluster.getClusterRecord(currentAdcode, function(error, result) {
+
+                    //currentAdcode已经更新，有新的点击
+                    if (result.adcode !== currentAdcode) {
+                        return;
+                    }
+
+                    //设置数据
+                    pointSimplifierIns.setData(result.dataItems);
+                })
+            });
+
+            distCluster.on('renderFinish', function(e, result) {
+
+                var features = result.features, //当前绘制的features
+                    currentAdcodeExists = false;
+
+                for (var i = 0, len = features.length; i < len; i++) {
+                    if (currentAdcode === features[i].properties.adcode) {
+
+                        currentAdcodeExists = true;
+                        break;
+                    }
+                }
+
+                if (!currentAdcodeExists) {
+                    //如果当前adcode没有绘制，清除？
+                    //pointSimplifierIns.setData(null);
+                }
+            });
+
+
+            window.distCluster = distCluster;
+
+            function refresh() {
+
+                var zoom = map.getZoom();
+
+                //获取 pointStyle
+                var pointStyle = pointSimplifierIns.getRenderOptions().pointStyle;
+
+                //根据当前zoom调整点的尺寸
+                pointStyle.width = pointStyle.height = 2 * Math.pow(1.2, map.getZoom() - 3);
+
+                // var zoom = map.getZoom();
+
+                // if (zoom < 10) {
+
+                //     pointSimplifierIns.hide();
+
+                // } else {
+
+                //     pointSimplifierIns.show();
+                // }
+            }
+
+            map.on('zoomend', function() {
+                refresh();
+            });
+
+            refresh();
+
+            $('<div id="loadingTip">加载数据，请稍候...</div>').appendTo(document.body);
+            $.get('https://a.amap.com/amap-ui/static/data/10w.txt', function(csv) {
+
+                $('#loadingTip').remove();
+
+                var data = csv.split('\n');
+
+                distCluster.setData(data);
+            });
+        }
+
+        //加载相关组件
+        AMapUI.load(['ui/geo/DistrictCluster', 'ui/misc/PointSimplifier', 'lib/$'], function(DistrictCluster, PointSimplifier, $) {
+
+            //启动页面
+            initPage(DistrictCluster, PointSimplifier, $);
+        });
+    });
+</script>

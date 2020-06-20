@@ -1,0 +1,77 @@
+<?php
+
+namespace app\admin\controller\device;
+
+use app\admin\model\Device;
+use app\admin\model\DeviceLog;
+use app\admin\model\SystemAdmin;
+use app\admin\model\SystemProvince;
+use app\common\controller\AdminController;
+use EasyAdmin\annotation\ControllerAnnotation;
+use EasyAdmin\annotation\NodeAnotation;
+use think\App;
+
+/**
+ * @ControllerAnnotation(title="Area")
+ */
+class Area extends AdminController
+{
+
+    protected $provinces;
+
+    public function __construct(App $app)
+    {
+        parent::__construct($app);
+        $this->provinces = SystemProvince::getProvinceList();
+        $this->assign('provinces', $this->provinces);
+    }
+
+    
+    /**
+     * @NodeAnotation(title="列表")
+     */
+    public function index()
+    {
+        $map = $this->device_where();
+        if ($this->request->isAjax()){
+            $data['data'] = Device::where($map)->field('id,name,x_coordinates as lng,y_coordinates as lat')->select();
+            return json($data);
+        }
+        $provinces = SystemProvince::column('id,pid,name as title,adcode,zoom,center', 'id');
+        foreach($provinces as $k => $v){
+            //查询当前权限下，某个省份的所有设备
+            $devices = Device::where($map)->where('area_id', $k)->select()->toArray();
+            //如果存在
+            if (!empty($devices)){
+                //遍历设备
+                foreach ($devices as $a => $b){
+                    //修改设备ID，避免与省份ID重复，以保持treeID唯一
+                    $b['id'] = 's'.$b['id'];
+                    //将其追加到省份的子菜单中
+                    $provinces[$k]['children'][] = $b;
+                }
+            }
+        }
+        halt($provinces);
+        $tree = SystemProvince::list_to_tree($provinces);
+        $tree = json_encode($tree);
+        $this->assign('tree', $tree);
+        return $this->fetch();
+    }
+
+    /**
+     * @NodeAnotation(title="弹窗")
+     */
+    public function pop()
+    {
+        $map = $this->device_where();
+        $id = $this->request->get('id/d');
+        $device = Device::where($map)->where('id', $id)->find();
+        if (!empty($device)){
+            $lastLog = DeviceLog::where('device_id', $device['device_id'])->order('id', 'desc')->limit(1)->find();
+            $lastLog['name'] = $device['name'];
+            $this->assign('data', $lastLog);
+            return $this->fetch();
+        }
+    }
+}

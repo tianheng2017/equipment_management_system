@@ -1,0 +1,7 @@
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div id="container" style="width:100%; height:800px;resize:both;"></div>
+    </div>
+</div>
+<!--<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=8278ec87f2f992b65ff6553afad8aea7&plugin=AMap.ControlBar,AMap.DistrictLayer,AMap.Scale,AMap.ToolBar,AMap.MarkerClusterer"></script>-->
+<script src="https://webapi.amap.com/js/require.js" data-main="./require-init"></script>

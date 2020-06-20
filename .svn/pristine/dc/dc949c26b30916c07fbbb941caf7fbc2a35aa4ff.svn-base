@@ -1,0 +1,38 @@
+<?php
+
+namespace app\admin\controller\device;
+
+use app\admin\model\Device;
+use app\admin\model\SystemAdmin;
+use app\admin\model\SystemProvince;
+use app\common\controller\AdminController;
+use EasyAdmin\annotation\ControllerAnnotation;
+use EasyAdmin\annotation\NodeAnotation;
+use think\App;
+
+/**
+ * @ControllerAnnotation(title="Area")
+ */
+class Area extends AdminController
+{
+
+//    use \app\admin\traits\Curd;
+    protected $provinces;
+
+    public function __construct(App $app)
+    {
+        parent::__construct($app);
+        $this->provinces = SystemProvince::getProvinceList();
+        $this->assign('provinces', $this->provinces);
+    }
+
+    
+    /**
+     * @NodeAnotation(title="列表")
+     */
+    public function index()
+    {
+        halt($this->provinces);
+        return $this->fetch();
+    }
+}

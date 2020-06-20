@@ -1,0 +1,37 @@
+define(["jquery", "easy-admin"], function ($, ea) {
+
+    var init = {
+        table_elem: '#currentTable',
+        table_render_id: 'currentTableRenderId',
+        index_url: 'system.province/index',
+        add_url: 'system.province/add',
+        edit_url: 'system.province/edit',
+        delete_url: 'system.province/delete',
+        export_url: 'system.province/export',
+        modify_url: 'system.province/modify',
+    };
+
+    var Controller = {
+
+        index: function () {
+            ea.table.render({
+                init: init,
+                toolbar: [],
+                cols: [[
+                    {type: 'checkbox'},
+                    {field: 'id', title: '区域ID'},
+                    {field: 'name', title: '区域名称'},
+                    {field: 'adcode', title: '行政代码'},
+                    {field: 'zoom', title: '放大级别'},
+                    {field: 'center', title: '中心坐标'},
+                    {width: 250, title: '操作', templet: ea.table.tool, operat: ['edit']},
+                ]],
+            });
+            ea.listen();
+        },
+        edit: function () {
+            ea.listen();
+        },
+    };
+    return Controller;
+});

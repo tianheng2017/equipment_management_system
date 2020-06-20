@@ -1,0 +1,20 @@
+define(["jquery", "easy-admin", "initAMap"], function ($, ea) {
+
+    var Controller = {
+        index: function () {
+            require.config({
+                paths: {
+                    "amap": "https://webapi.amap.com/maps?v=1.4.15&key=8278ec87f2f992b65ff6553afad8aea7&callback=onAMapLoaded"
+                }
+            });
+            window.onAMapLoaded = function() {
+                require(['initAMap'], function(mapIniter) {
+                    mapIniter.init();
+                });
+            }
+            require(['amap']);
+            ea.listen();
+        },
+    };
+    return Controller;
+});

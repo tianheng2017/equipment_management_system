@@ -1,0 +1,205 @@
+<div class="layuimini-container">
+    <div class="layuimini-main">
+        <div id="container" style="width:100%; height:800px;resize:both;"></div>
+    </div>
+</div>
+<script type="text/javascript" src="/static/plugs/jquery-3.4.1/jquery-3.4.1.min.js"></script>
+<script type="text/javascript" src="/static/plugs/layui-v2.5.6/layui.all.js"></script>
+<script type="text/javascript" src="/static/plugs/amap/adcodes.js"></script>
+<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.15&key=8278ec87f2f992b65ff6553afad8aea7&plugin=AMap.ControlBar,AMap.DistrictLayer,AMap.Scale,AMap.ToolBar,AMap.MarkerClusterer"></script>
+<script src="//webapi.amap.com/ui/1.1/main.js"></script>
+<script>
+    var map = new AMap.Map('container', {
+        resizeEnable: true,
+        rotateEnable:true,
+        pitchEnable:true,
+        features:['bg','road', 'building', 'point'],
+        pitch:0,
+        rotation:0,
+        viewMode:'3D',
+        buildingAnimation:true,
+        expandZoomRange:true,
+        center: [105, 34],
+        zoom: 5
+    });
+    map.addControl(new AMap.ControlBar({
+        showZoomBar:false,
+        showControlButton:true,
+        position:{
+            right:'10px',
+            top:'10px'
+        }
+    }));
+</script>
+<script type="text/javascript" src="/static/plugs/amap/DistrictExplorer.js"></script>
+<script>
+    $(function () {
+        var overlayGroups, cluster;
+        $.ajax({
+            url : '{:url("device.area/index")}',
+            type : "get",
+            dataType : "json",
+            success : function(res){
+                if(res.code === 0){
+                    layer.alert(res.msg, function(index){
+                        window.location.href = res.url;
+                    });
+                }
+                var marker, markers = [];
+                var infoWindow = new AMap.InfoWindow({
+                    isCustom: false,
+                    autoMove: true,
+                    offset: new AMap.Pixel(0, -30),
+                    size: new AMap.Size(560, 330),
+                    content: ""
+                });
+                if(!res.data) return true;
+                for(var i=0; i< res.data.length; i++){
+                    var lnglat=[res.data[i].lng,res.data[i].lat];
+                    marker = new AMap.Marker({
+                        position: lnglat,
+                        zIndex: 1000,
+                        title: res.data[i].name,
+                        map: map,
+                        extData: {
+                            id: i + 1
+                        }
+                    });
+                    marker.id = res.data[i].id;
+                    marker.on('click', function(e){
+                        var htmls = get_marker_table(e.target.id);
+                        infoWindow.setContent(htmls);
+                        infoWindow.open(map, e.lnglat);
+                        e.target.setAnimation('AMAP_ANIMATION_BOUNCE');
+                        infoWindow.on('change', function() {
+                            e.target.setAnimation('AMAP_ANIMATION_NONE');
+                        });
+                    });
+                    markers.push(marker);
+                }
+                overlayGroups = new AMap.OverlayGroup(markers);
+                map.add(overlayGroups);
+            }
+        });
+        var colors = ["#fff"];
+        var districtExplorer, fillColor, strokeColor, polys;
+        var currentAreaNode = null;
+        AMapUI.load(['ui/geo/DistrictExplorer', 'lib/$'], function(DistrictExplorer, $) {
+            districtExplorer = window.districtExplorer = new DistrictExplorer({
+                eventSupport: true,
+                map: map
+            });
+            var $tipMarkerContent = $('<div class="tipMarker top"></div>');
+            var tipMarker = new AMap.Marker({
+                content: $tipMarkerContent.get(0),
+                offset: new AMap.Pixel(0, 0),
+                bubble: true
+            });
+            function toggleHoverFeature(feature, isHover, position) {
+                tipMarker.setMap(isHover ? map : null);
+                if (!feature) {
+                    return;
+                }
+                var props = feature.properties;
+                if (isHover) {
+                    $tipMarkerContent.html(props.name);
+                    tipMarker.setPosition(position || props.center);
+                }
+                polys = districtExplorer.findFeaturePolygonsByAdcode(props.adcode);
+                for (var i = 0, len = polys.length; i < len; i++) {
+                    polys[i].setOptions({
+                        fillOpacity: isHover ? 0.5 : 0.2
+                    });
+                }
+            }
+            districtExplorer.on('featureMouseout featureMouseover', function(e, feature) {
+                toggleHoverFeature(feature, e.type === 'featureMouseover',
+                    e.originalEvent ? e.originalEvent.lnglat : null);
+            });
+            districtExplorer.on('featureMousemove', function(e, feature) {
+                tipMarker.setPosition(e.originalEvent.lnglat);
+            });
+            districtExplorer.on('featureClick', function(e, feature) {
+                var props = feature.properties;
+                if (props.childrenNum > 0) {
+                    initPro(props.adcode);
+                }
+            });
+            districtExplorer.on('outsideClick', function(e) {
+                districtExplorer.locatePosition(e.originalEvent.lnglat, function(error, routeFeatures) {
+                    if (routeFeatures && routeFeatures.length > 1) {
+                        initPro(routeFeatures[1].properties.adcode);
+                    } else {
+                        initPro(100000);
+                    }
+                }, {
+                    levelLimit: 2
+                });
+            });
+            initPro(100000);
+        });
+        function renderAreaPolygons(areaNode) {
+            map.setBounds(areaNode.getBounds(), null, null, true);
+            districtExplorer.clearFeaturePolygons();
+            districtExplorer.renderSubFeatures(areaNode, function(feature, i) {
+                fillColor = colors[i % colors.length];
+                strokeColor = colors[colors.length - 1 - i % colors.length];
+                return {
+                    cursor: 'default',
+                    bubble: true,
+                    strokeColor: strokeColor,
+                    strokeOpacity: 1,
+                    strokeWeight: 1,
+                    fillColor: fillColor,
+                    fillOpacity: 0,
+                };
+            });
+            districtExplorer.renderParentFeature(areaNode, {
+                cursor: 'default',
+                bubble: true,
+                strokeColor: 'blue',
+                strokeOpacity: 0.5,
+                strokeWeight: 1,
+                fillColor: '#ccc',
+                fillOpacity: 0,
+            });
+        }
+        function refreshAreaNode(areaNode) {
+            districtExplorer.setHoverFeature(null);
+            renderAreaPolygons(areaNode);
+        }
+        function initPro(adcode, callback) {
+            if (currentAreaNode && ('' + currentAreaNode.getAdcode() === '' + adcode)) {
+                return;
+            }
+            loadAreaNode(adcode, function(error, areaNode) {
+                if (error) {
+                    if (callback) {
+                        callback(error);
+                    }
+                    return;
+                }
+                currentAreaNode = window.currentAreaNode = areaNode;
+                districtExplorer.setAreaNodesForLocating([currentAreaNode]);
+                refreshAreaNode(areaNode);
+                if (callback) {
+                    callback(null, areaNode);
+                }
+            });
+        }
+        function loadAreaNode(adcode, callback) {
+            districtExplorer.loadAreaNode(adcode, function(error, areaNode) {
+                if (error) {
+                    if (callback) {
+                        callback(error);
+                    }
+                    console.error(error);
+                    return;
+                }
+                if (callback) {
+                    callback(null, areaNode);
+                }
+            });
+        }
+    });
+</script>

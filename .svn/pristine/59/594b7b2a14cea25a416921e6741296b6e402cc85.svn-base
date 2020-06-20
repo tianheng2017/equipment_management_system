@@ -1,0 +1,77 @@
+define(function() {
+    var init = function() {
+        var map = new AMap.Map('container', {
+            resizeEnable: true,
+            rotateEnable:true,
+            pitchEnable:true,
+            features:['bg','road', 'building', 'point'],
+            pitch:0,
+            rotation:0,
+            viewMode:'3D',
+            buildingAnimation:true,
+            expandZoomRange:true,
+        });
+        map.addControl(new AMap.ControlBar({
+            showZoomBar:false,
+            showControlButton:true,
+            position:{
+                right:'10px',
+                top:'10px'
+            }
+        }));
+        layui.define('layer', function(exports){
+            exports('addmarker', function(url){
+                if (cluster) {
+                    cluster.setMap(null);
+                }
+                ea.request.ajax('get',{
+                    url: url,
+                }, function (res) {
+                    if(res.code === 0){
+                        layer.alert(res.msg, function(index){
+                            ea.url('index');
+                        });
+                    }
+                    var marker, markers = [];
+                    var infoWindow = new AMap.InfoWindow({
+                        isCustom: false,
+                        autoMove: true,
+                        offset: new AMap.Pixel(0, -30),
+                        size: new AMap.Size(560, 330),
+                        content: ""
+                    });
+                    if(!res.data) return true;
+                    for(var i=0; i< res.data.length; i++){
+                        var lnglat=[res.data[i].lng,res.data[i].lat];
+                        marker = new AMap.Marker({
+                            position: lnglat,
+                            zIndex: 1000,
+                            title: res.data[i].name,
+                            map: map,
+                            extData: {
+                                id: i + 1
+                            }
+                        });
+                        marker.id = res.data[i].id;
+                        marker.on('click', function(e){
+                            var htmls = get_marker_table(e.target.id);
+                            infoWindow.setContent(htmls);
+                            infoWindow.open(map, e.lnglat);
+                            e.target.setAnimation('AMAP_ANIMATION_BOUNCE');
+                            infoWindow.on('change', function() {
+                                e.target.setAnimation('AMAP_ANIMATION_NONE');
+                            });
+                        });
+                        markers.push(marker);
+                    }
+                    overlayGroups = new AMap.OverlayGroup(markers);
+                    map.add(overlayGroups);
+                });
+            });
+            layui.addmarker('device.area/index');
+        });
+    };
+    return {
+        init: init
+    };
+});

@@ -1,0 +1,39 @@
+define(["jquery", "easy-admin", "initAMap"], function ($, ea) {
+
+    var Controller = {
+        index: function () {
+            // var map = new AMap.Map('container', {
+            //     resizeEnable: true,
+            //     rotateEnable:true,
+            //     pitchEnable:true,
+            //     features:['bg','road', 'building', 'point'],
+            //     pitch:0,
+            //     rotation:0,
+            //     viewMode:'3D',
+            //     buildingAnimation:true,
+            //     expandZoomRange:true,
+            // });
+            // map.addControl(new AMap.ControlBar({
+            //     showZoomBar:false,
+            //     showControlButton:true,
+            //     position:{
+            //         right:'10px',
+            //         top:'10px'
+            //     }
+            // }));
+            require.config({
+                paths: {
+                    "amap": "https://webapi.amap.com/maps?v=1.4.15&key=&callback=onAMapLoaded"
+                }
+            });
+            window.onAMapLoaded = function() {
+                require(['initAMap'], function(mapIniter) {
+                    mapIniter.init();
+                })
+            }
+            require(['amap'])
+            ea.listen();
+        },
+    };
+    return Controller;
+});

@@ -1,0 +1,35 @@
+<div class="layuimini-container">
+    <form id="app-form" class="layui-form layuimini-form">
+        
+        <div class="layui-form-item">
+            <label class="layui-form-label">区域名称</label>
+            <div class="layui-input-block">
+                <input type="text" name="name" class="layui-input"  placeholder="请输入区域名称" value="{$row.name|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">区域代码</label>
+            <div class="layui-input-block">
+                <input type="text" name="adcode" class="layui-input"  placeholder="请输入区域代码" value="{$row.adcode|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">放大级别</label>
+            <div class="layui-input-block">
+                <input type="text" name="zoom" class="layui-input"  placeholder="请输入地图默认放大级别" value="{$row.zoom|default=''}">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">中心坐标</label>
+            <div class="layui-input-block">
+                <input type="text" name="center" class="layui-input"  placeholder="请输入地图中心点坐标" value="{$row.center|default=''}">
+            </div>
+        </div>
+        <div class="hr-line"></div>
+        <div class="layui-form-item text-center">
+            <button type="submit" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit>确认</button>
+            <button type="reset" class="layui-btn layui-btn-primary layui-btn-sm">重置</button>
+        </div>
+
+    </form>
+</div>

@@ -1,0 +1,9 @@
+define(["jquery", "adcodes","DistrictExplorer","main"], function ($, ea) {
+
+    var Controller = {
+        index: function () {
+            ea.listen();
+        },
+    };
+    return Controller;
+});

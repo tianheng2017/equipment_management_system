@@ -1,0 +1,56 @@
+<?php
+
+namespace app\admin\controller\device;
+
+use app\admin\model\Device;
+use app\admin\model\DeviceLog;
+use app\admin\model\SystemAdmin;
+use app\admin\model\SystemProvince;
+use app\common\controller\AdminController;
+use EasyAdmin\annotation\ControllerAnnotation;
+use EasyAdmin\annotation\NodeAnotation;
+use think\App;
+
+/**
+ * @ControllerAnnotation(title="Area")
+ */
+class Area extends AdminController
+{
+
+    protected $provinces;
+
+    public function __construct(App $app)
+    {
+        parent::__construct($app);
+        $this->provinces = SystemProvince::getProvinceList();
+        $this->assign('provinces', $this->provinces);
+    }
+
+    
+    /**
+     * @NodeAnotation(title="列表")
+     */
+    public function index()
+    {
+        if ($this->request->isAjax()){
+            $map = $this->device_where();
+            $data['data'] = Device::where($map)->field('id,name,x_coordinates as lng,y_coordinates as lat')->select();
+            return json($data);
+        }
+        return $this->fetch();
+    }
+
+    /**
+     * @NodeAnotation(title="弹窗")
+     */
+    public function popUps()
+    {
+        $map = $this->device_where();
+        $id = $this->request->get('id/d');
+        $device_id = Device::where($map)->where('id', $id)->value('device_id');
+        if ($device_id){
+            $new_log = DeviceLog::where('device_id', $device_id)->order('id', 'desc')->limit(1)->find();
+            halt($new_log);
+        }
+    }
+}

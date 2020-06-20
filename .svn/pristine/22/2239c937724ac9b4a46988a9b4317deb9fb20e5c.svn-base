@@ -1,0 +1,70 @@
+<div class="layuimini-container">
+    <form id="app-form" class="layui-form layuimini-form">
+        <div class="layui-form-item">
+            <label class="layui-form-label">设备ID</label>
+            <div class="layui-input-block">
+                <input type="text" name="device_id" class="layui-input" lay-verify="required" placeholder="请输入设备ID" value="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">设备IP</label>
+            <div class="layui-input-block">
+                <input type="text" name="rem_host" class="layui-input" lay-verify="required" placeholder="请输入设备IP" value="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">电压</label>
+            <div class="layui-input-block">
+                <input type="text" name="voltage" class="layui-input" lay-verify="required" placeholder="请输入电压" value="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">电流</label>
+            <div class="layui-input-block">
+                <input type="text" name="current" class="layui-input" lay-verify="required" placeholder="请输入电流" value="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">温度</label>
+            <div class="layui-input-block">
+                <input type="text" name="temperature" class="layui-input" lay-verify="required" placeholder="请输入温度" value="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">湿度</label>
+            <div class="layui-input-block">
+                <input type="text" name="humidity" class="layui-input" lay-verify="required" placeholder="请输入湿度" value="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">油烟</label>
+            <div class="layui-input-block">
+                <input type="text" name="lampblack" class="layui-input" lay-verify="required" placeholder="请输入油烟" value="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">非甲烷总烃</label>
+            <div class="layui-input-block">
+                <input type="text" name="hydrocarbon" class="layui-input" lay-verify="required" placeholder="请输入非甲烷总烃" value="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">PM2.5</label>
+            <div class="layui-input-block">
+                <input type="text" name="pm2p5" class="layui-input" lay-verify="required" placeholder="请输入PM2.5" value="">
+            </div>
+        </div>
+        <div class="layui-form-item">
+            <label class="layui-form-label">记录时间</label>
+            <div class="layui-input-block">
+                <input type="text" name="time" data-date="" data-date-type="datetime" class="layui-input" lay-verify="required" placeholder="请输入记录时间" value="">
+            </div>
+        </div>
+        <div class="hr-line"></div>
+        <div class="layui-form-item text-center">
+            <button type="submit" class="layui-btn layui-btn-normal layui-btn-sm" lay-submit>确认</button>
+            <button type="reset" class="layui-btn layui-btn-primary layui-btn-sm">重置</button>
+        </div>
+
+    </form>
+</div>
